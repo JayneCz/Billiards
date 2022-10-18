@@ -33,20 +33,20 @@ public class RotateWithInput : MonoBehaviour
         switch (rotationAxis)
         {
             case Axis.X:
-                eulerAngles.x = getNewAngle(eulerAngles.x);
+                eulerAngles.x = GetNewAngle(eulerAngles.x);
                 break;
             case Axis.Y:
-                eulerAngles.y = getNewAngle(eulerAngles.y);
+                eulerAngles.y = GetNewAngle(eulerAngles.y);
                 break;
             case Axis.Z:
-                eulerAngles.z = getNewAngle(eulerAngles.z);
+                eulerAngles.z = GetNewAngle(eulerAngles.z);
                 break;
         }
 
         transform.localEulerAngles = eulerAngles;
     }
 
-    private float getNewAngle(float oldAngle)
+    private float GetNewAngle(float oldAngle)
     {
         float newAngle = oldAngle + angleToAdd;
         if (clampAngle)
