@@ -9,7 +9,7 @@ public class ShotsText : ValueText
     // Start is called before the first frame update
     void Start()
     {
-        GameObject.FindWithTag("Player").GetComponent<CueBallBehaviour>().OnShoot += SetShots;
+        GameObject.FindWithTag("Player").GetComponent<Player>().OnShoot += SetShots;
     }
 
     // Update is called once per frame
