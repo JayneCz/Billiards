@@ -32,6 +32,7 @@ public class MoveWithInput : MonoBehaviour
         float x = useAxisX ? Input.GetAxis(axisNameX) : 0f;
         float y = useAxisY ? Input.GetAxis(axisNameY) : 0f;
         float z = useAxisZ ? Input.GetAxis(axisNameZ) : 0f;
+
         direction = Vector3.ClampMagnitude(new Vector3(x, y, z), 1f);
 
         transform.Translate(direction * speedMax * Time.deltaTime);

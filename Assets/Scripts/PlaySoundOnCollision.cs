@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class PlaySoundOnCollision : MonoBehaviour
 {
-    private AudioSource audioSource;
-
     [SerializeField] private float volume = 0.01f;
+
+    private AudioSource audioSource;
 
     // Start is called before the first frame update
     void Start()

@@ -13,7 +13,7 @@ public class ReplayButton : MonoBehaviour
     void Start()
     {
         button = GetComponent<Button>();
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        player = GameObject.FindGameObjectWithTag(Player.TAG).GetComponent<Player>();
     }
 
     // Update is called once per frame

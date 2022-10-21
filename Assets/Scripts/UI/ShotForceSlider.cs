@@ -13,7 +13,8 @@ public class ShotForceSlider : MonoBehaviour
     void Start()
     {
         slider = GetComponent<Slider>();
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        player = GameObject.FindGameObjectWithTag(Player.TAG).GetComponent<Player>();
+
         slider.minValue = player.ShootForceMin;
         slider.maxValue = player.ShootForceMax;
     }

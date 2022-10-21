@@ -11,6 +11,7 @@ public class StatsText : MonoBehaviour
 
     private Stats stats;
     private TMP_Text tmpText;
+
     private bool updateContinuously = false;
 
     // Start is called before the first frame update
@@ -18,7 +19,7 @@ public class StatsText : MonoBehaviour
     {
         tmpText = gameObject.GetComponent<TMP_Text>();
 
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        GameObject player = GameObject.FindGameObjectWithTag(Player.TAG);
         if (player)
         {
             updateContinuously = true;

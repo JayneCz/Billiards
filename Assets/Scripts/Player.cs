@@ -8,14 +8,16 @@ using UnityEngine.Events;
 
 public class Player : MonoBehaviour
 {
+    public const string TAG = "Player";
+
+    private const string OBJECTIVE_TAG = "Objective";
     private const string SHOOT_BUTTON_NAME = "Shoot";
     private const string REPLAY_BUTTON_NAME = "Replay";
-    private const string OBJECTIVE_TAG = "Objective";
     private const string VICTORY_SCENE_NAME = "Victory";
 
     public readonly Stats stats = new Stats();
-    public bool CanReplay { get; private set; } = false;
 
+    public bool CanReplay { get; private set; } = false;
     public float ShootForceCurrent { get; private set; } = 0f;
 
     [field: SerializeField] public float ShootForceMin { get; private set; } = 0f;
@@ -61,14 +63,11 @@ public class Player : MonoBehaviour
             ShootWithInput();
         }
     }
+
     void OnCollisionEnter(Collision collision)
     {
-        if (replaying)
-        {
-            return;
-        }
         GameObject other = collision.gameObject;
-        if (other.CompareTag(OBJECTIVE_TAG) && !objectivesHit[other])
+        if (!replaying && other.CompareTag(OBJECTIVE_TAG) && !objectivesHit[other])
         {
             objectivesHit[other] = true;
 
@@ -100,6 +99,7 @@ public class Player : MonoBehaviour
     private void RecordReplay(Vector3 force)
     {
         replayForce = force;
+
         replayObjectPositions = new Dictionary<GameObject, Vector3>();
         replayObjectPositions.Add(gameObject, transform.position);
         foreach (var objective in objectivesHit.Keys)
@@ -146,11 +146,14 @@ public class Player : MonoBehaviour
 
             Vector3 force = cueStick.forward;
             force *= ShootForceCurrent;
+
             RecordReplay(force);
+
             gameObject.GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
             ShootForceCurrent = ShootForceMin;
         }
     }
+
     private void ResetObjectivesHit()
     {
         foreach (var objective in objectivesHit.Keys.ToList())
