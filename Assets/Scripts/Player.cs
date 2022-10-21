@@ -14,6 +14,8 @@ public class Player : MonoBehaviour
     private const string VICTORY_SCENE_NAME = "Victory";
 
     public readonly Stats stats = new Stats();
+    public bool CanReplay { get; private set; } = false;
+
     public float ShootForceCurrent { get; private set; } = 0f;
 
     [field: SerializeField] public float ShootForceMin { get; private set; } = 0f;
@@ -25,7 +27,7 @@ public class Player : MonoBehaviour
 
     private readonly Dictionary<GameObject, bool> objectivesHit = new Dictionary<GameObject, bool>();
 
-    private bool readyToShoot = true;
+    private bool canShoot = true;
 
     private bool replaying = false;
     private Dictionary<GameObject, Vector3> replayObjectPositions;
@@ -45,16 +47,16 @@ public class Player : MonoBehaviour
     {
         stats.time += Time.deltaTime;
 
-        readyToShoot = IsStationary() && AllObjectivesAreStationary();
+        canShoot = IsStationary() && AllObjectivesAreStationary();
+        CanReplay = !replaying && canShoot && stats.shots >= 1 && ShootForceCurrent == ShootForceMin;
 
-        if (readyToShoot)
+        if (Input.GetButtonDown(REPLAY_BUTTON_NAME))
+        {
+            TryStartReplay();
+        }
+        else if (canShoot)
         {
             replaying = false;
-            if (Input.GetButtonDown(REPLAY_BUTTON_NAME) && stats.shots >= 1 && ShootForceCurrent == ShootForceMin)
-            {
-                StartReplay();
-                return;
-            }
             ChargeShotWithInput();
             ShootWithInput();
         }
@@ -79,6 +81,30 @@ public class Player : MonoBehaviour
                     SceneSwitcher.LoadScene(VICTORY_SCENE_NAME);
                 }
             }
+        }
+    }
+
+    public void TryStartReplay()
+    {
+        if (CanReplay)
+        {
+            replaying = true;
+            foreach (var objectPositionPair in replayObjectPositions)
+            {
+                objectPositionPair.Key.transform.position = objectPositionPair.Value;
+            }
+            gameObject.GetComponent<Rigidbody>().AddForce(replayForce, ForceMode.Impulse);
+        }
+    }
+
+    private void RecordReplay(Vector3 force)
+    {
+        replayForce = force;
+        replayObjectPositions = new Dictionary<GameObject, Vector3>();
+        replayObjectPositions.Add(gameObject, transform.position);
+        foreach (var objective in objectivesHit.Keys)
+        {
+            replayObjectPositions.Add(objective, objective.transform.position);
         }
     }
 
@@ -112,7 +138,7 @@ public class Player : MonoBehaviour
     {
         if (Input.GetButtonUp(SHOOT_BUTTON_NAME))
         {
-            readyToShoot = false;
+            canShoot = false;
 
             ResetObjectivesHit();
 
@@ -131,27 +157,6 @@ public class Player : MonoBehaviour
         {
             objectivesHit[objective] = false;
         }
-    }
-
-    private void RecordReplay(Vector3 force)
-    {
-        replayForce = force;
-        replayObjectPositions = new Dictionary<GameObject, Vector3>();
-        replayObjectPositions.Add(gameObject, transform.position);
-        foreach (var objective in objectivesHit.Keys)
-        {
-            replayObjectPositions.Add(objective, objective.transform.position);
-        }
-    }
-
-    private void StartReplay()
-    {
-        replaying = true;
-        foreach (var objectPositionPair in replayObjectPositions)
-        {
-            objectPositionPair.Key.transform.position = objectPositionPair.Value;
-        }
-        gameObject.GetComponent<Rigidbody>().AddForce(replayForce, ForceMode.Impulse);
     }
 
 }
