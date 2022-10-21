@@ -24,7 +24,6 @@ public class PlaySoundOnCollision : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         audioSource.volume = collision.relativeVelocity.magnitude * volume;
-        Debug.Log(audioSource.volume);
         audioSource.Play();
     }
 }
